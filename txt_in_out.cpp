@@ -24,8 +24,8 @@ void writeFile(){
         cout << "Error loading the file" << endl;
     }
 
-    file << "1|Gabriel Dudeck|(41) 91234-5678|dudeckfox@gmail.com|Friend" << "\n";
-    file << "2|Mafer Salim|(41) 99871-1977|mfefesalim@gmail.com|Girlfriend" << "\n";
+    file << "1|Gabriel Dudeck|(1234|dudeckfox@gmail.com|Friend" << "\n";
+    file << "2|Mafer Salim|1234|mfefesalim@gmail.com|Girlfriend" << "\n";
 
     file.close();
     
