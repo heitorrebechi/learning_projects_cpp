@@ -1,48 +1,68 @@
 #include <iostream>
 #include <string>
+#include <limits>
 using namespace std;
 
-struct Node{
-    int data;
-    Node *prev;
-    Node *next;
+struct Student{
+    string name;
+    double grade;
+
+    Student(string name, double grade){
+        this->name = name;
+        this->grade = grade;
+    }
 };
 
-class DoublyLinkedList{
+ostream& operator<<(ostream& os, const Student& student){
+    os << "Name: " << student.name << " | Grade: " << student.grade;
+    return os;
+}
+
+bool operator!=(const Student& a, const Student& b){
+    return a.name != b.name;
+}
+
+template <typename T> struct Node{
+    T data;
+    Node<T> *prev;
+    Node<T> *next;
+};
+
+template <typename T> class DoublyLinkedList{
     private:
-        Node* head;
-        Node* tail;
+        Node<T>* head;
+        Node<T>* tail;
         int len;
     public:
         int getLen(){
             return len;
         }
-        void pushBack(int value){
+        void pushBack(const T& value){
 
             len++;
 
             if(tail == nullptr){
-                tail = new Node{value, nullptr, nullptr};
+                tail = new Node<T>{value, nullptr, nullptr};
                 head = tail;
                 return;
             }
 
-            Node* temp = tail;
-            tail = new Node{value, temp, nullptr};
+            Node<T>* temp = tail;
+            tail = new Node<T>{value, temp, nullptr};
             temp->next = tail;
 
         }
-        void pushFront(int value){
+        void pushFront(const T& value){
 
             len++;
 
             if(head == nullptr){
-                head = new Node{value, nullptr, nullptr};
+                head = new Node<T>{value, nullptr, nullptr};
                 tail = head;
                 return;
             }
 
-            head = new Node{value, nullptr, head};
+            head = new Node<T>{value, nullptr, head};
             head->next->prev = head;
 
         }
@@ -59,7 +79,7 @@ class DoublyLinkedList{
                 return true;
             }
 
-            Node *temp = tail->prev;
+            Node<T> *temp = tail->prev;
             temp->next = nullptr;
             delete tail;
             tail = temp;
@@ -82,7 +102,7 @@ class DoublyLinkedList{
                 return true;
             }
 
-            Node *temp = head->next;
+            Node<T> *temp = head->next;
             temp->prev = nullptr;
             delete head;
             head = temp;
@@ -92,7 +112,7 @@ class DoublyLinkedList{
             return true;
 
         }
-        void insertAt(int value, int index){
+        void insertAt(const T& value, int index){
 
             if(index == 0){
                 cout << "Inserting at index 0" << endl;
@@ -107,27 +127,27 @@ class DoublyLinkedList{
 
             if(index < len / 2){
 
-                Node *temp = head;
+                Node<T> *temp = head;
                 int itIndex = 0;
                 while(itIndex != index){
                     temp = temp->next;
                     itIndex++;
                 }
 
-                temp->prev->next = new Node{value, temp->prev, temp};
+                temp->prev->next = new Node<T>{value, temp->prev, temp};
                 temp->prev = temp->prev->next;
 
             }
             else{
 
-                Node *temp = tail;
+                Node<T> *temp = tail;
                 int itIndex = len - 1;
                 while(itIndex != index){
                     temp = temp->prev;
                     itIndex--;
                 }
 
-                temp->prev->next = new Node{value, temp->prev, temp};
+                temp->prev->next = new Node<T>{value, temp->prev, temp};
                 temp->prev = temp->prev->next;
 
             }
@@ -146,7 +166,7 @@ class DoublyLinkedList{
 
             if(index < len / 2){
 
-                Node *temp = head;
+                Node<T> *temp = head;
                 int itIndex = 0;
                 while(itIndex != index){
                     temp = temp->next;
@@ -160,7 +180,7 @@ class DoublyLinkedList{
             }
             else{
 
-                Node *temp = tail;
+                Node<T> *temp = tail;
                 int itIndex = len - 1;
                 while(itIndex != index){
                     temp = temp->prev;
@@ -178,9 +198,9 @@ class DoublyLinkedList{
             return true;
 
         }
-        const Node* find(int value){
+        const Node<T>* find(const T& value){
 
-            Node *temp = head;
+            Node<T> *temp = head;
             while(temp != nullptr && temp->data != value){
                 temp = temp->next;
             }
@@ -195,7 +215,7 @@ class DoublyLinkedList{
                 return;
             }
 
-            Node *temp = head;
+            Node<T> *temp = head;
             cout << "Doubly Linked List:" << endl;
             int c = 0;
             while(temp != nullptr){
@@ -212,7 +232,7 @@ class DoublyLinkedList{
                 return;
             }
 
-            Node *temp = tail;
+            Node<T> *temp = tail;
             cout << "Doubly Linked List:" << endl;
             int c = len - 1;
             while(temp != nullptr){
@@ -227,11 +247,23 @@ class DoublyLinkedList{
         this->tail = nullptr;
         this->len = 0;
     }
+    DoublyLinkedList(const DoublyLinkedList<T>& other){
+        head = nullptr;
+        tail = nullptr;
+        len = 0;
+
+        Node<T>* temp = other.head;
+        while(temp != nullptr){
+            pushBack(temp->data);
+            temp = temp->next;
+        }
+    }
+    DoublyLinkedList& operator=(const DoublyLinkedList&) = delete;
     ~DoublyLinkedList(){
 
         if(head != nullptr){
 
-            Node *temp = head->next;
+            Node<T> *temp = head->next;
             while(temp != nullptr){
                 delete head;
                 head = temp;
@@ -247,10 +279,15 @@ class DoublyLinkedList{
 int mainMenu();
 int dataInputMenu();
 int getIndex(int len);
+void stringMain();
+void studentMain();
+void copyTest();
 
 int main(){
 
-    DoublyLinkedList myList;
+    studentMain();
+
+    DoublyLinkedList<int> myList;
 
     while(true){
     
@@ -296,7 +333,7 @@ int main(){
                 }
                 break;
             case 7:
-                {const Node* it = myList.find(dataInputMenu());
+                {const Node<int>* it = myList.find(dataInputMenu());
                 if(it != nullptr){
                     cout << it->data << endl;
                 }
@@ -408,3 +445,33 @@ int getIndex(int len){
     }
 
 }
+void stringMain(){
+
+    DoublyLinkedList<string> myList;
+
+    myList.pushFront("Heitor");
+    myList.pushFront("Victor");
+    myList.pushFront("Dudeck");
+
+    myList.printForward();
+    myList.printBackwards();
+
+    myList.removeBack();
+    myList.printForward();
+    myList.printBackwards();
+
+}
+void studentMain(){
+
+    DoublyLinkedList<Student> myList;
+
+    myList.pushFront(Student{"Heitor", 7.0});
+    myList.pushFront(Student{"Victor", 8.0});
+    myList.pushFront(Student{"Dudeck", 9.0});
+
+    myList.printBackwards();
+
+    myList.find(Student{"Heitor", 7.0});
+
+}
+
